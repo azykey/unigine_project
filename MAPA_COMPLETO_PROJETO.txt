@@ -1,0 +1,365 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║             📊 MAPA COMPLETO DO PROJETO WarZ - ANÁLISE TOTAL                 ║
+║                                                                               ║
+║         Analisando: TANAWANT-THONGPING-STUDIO/                               ║
+║         Objetivo: Implementar TUDO em C# para Unigine                        ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+                        ESTRUTURA ENCONTRADA
+═══════════════════════════════════════════════════════════════════════════════
+
+TANAWANT-THONGPING-STUDIO/
+│
+├─ bin/ (EXECUTÁVEIS E ASSETS)
+│  ├─ TANAWANT-THONGPING.exe ........ Cliente principal do jogo
+│  ├─ WZ_GameServer.exe ............ Servidor de jogo
+│  ├─ MasterServer.exe ............ Master server (matchmaking)
+│  ├─ SupervisorServer.exe ........ Supervisor server
+│  ├─ RSBuild.exe ................. Build tools
+│  ├─ Data/ ....................... Assets de jogo (modelos, texturas)
+│  ├─ Levels/ ..................... Mapas do jogo
+│  └─ PhysX3*.dll ................. Physics engine
+│
+├─ src/ (CÓDIGO FONTE C++)
+│  ├─ GameEngine/
+│  │  ├─ gameobjects/
+│  │  │  ├─ GameObj.h/cpp ........ Base de todos os objetos do jogo
+│  │  │  ├─ obj_Vehicle.h/cpp .... Veículos
+│  │  │  ├─ obj_Mesh.h/cpp ....... Meshes estáticos
+│  │  │  ├─ obj_Apex.h/cpp ....... Destructible objects
+│  │  │  └─ PhysObj.h/cpp ........ Physics objects
+│  │  ├─ ai/ ..................... Sistema de IA
+│  │  ├─ CamouflageDataManager.h/cpp ... Gerenciador de camuflagem
+│  │  └─ APIScaleformGfx.h/cpp ... UI Graphics (Scaleform)
+│  │
+│  ├─ Scripts/
+│  │  └─ API/WZBackend-ASP.NET/ ... Backend API (não usado, legacy)
+│  │
+│  └─ External/
+│     └─ zstd/ ................... Compressão de dados
+│
+├─ server/ (CÓDIGO DO SERVIDOR)
+│  ├─ bin/ ....................... Binários do servidor
+│  ├─ src/ ....................... Código servidor
+│  └─ GameBlocksSDK/ ............. Game Blocks SDK
+│
+├─ EclipseStudio/ ................ Game engine (legacy, não usado)
+├─ Eternity/ ..................... Outra engine (não usado)
+├─ External/ ..................... Dependências externas
+└─ Tools/ ........................ Ferramentas auxiliares
+
+═══════════════════════════════════════════════════════════════════════════════
+                    TIPOS DE OBJETOS DO JOGO (EGameObjectType)
+═══════════════════════════════════════════════════════════════════════════════
+
+Encontrados em: GameObj.h
+
+enum EGameObjectType {
+    OBJTYPE_Generic              Objeto genérico
+    OBJTYPE_Terrain              Terreno
+    OBJTYPE_Mesh                 Mesh estático
+    OBJTYPE_Road                 Estrada
+    OBJTYPE_Building             Edifício
+    OBJTYPE_Human                Jogador (obj_Player)
+    OBJTYPE_Particle             Emissor de partículas
+    OBJTYPE_Sound                Emissor de som
+    OBJTYPE_Trees                Árvores
+    OBJTYPE_ApexDestructible     Objetos destrutíveis
+    OBJTYPE_AnimMesh             Mesh animado
+    OBJTYPE_DecalProxy           Decals (marcas, sangue)
+    OBJTYPE_Sprite               Sprites 2D
+    OBJTYPE_Vehicle              Veículos (jipes, helicopters)
+    OBJTYPE_Zombie               Zumbis/NPC
+    OBJTYPE_GameplayItem         Itens de gameplay (armas, munição)
+    OBJTYPE_CollectionProxy      Proxy de coleção
+    OBJTYPE_ItemSpawnPoint       Spawn de itens
+    OBJTYPE_SharedUsableItem     Itens compartilhados (porta, porta)
+    OBJTYPE_PlayerSpawnPoint     Spawn de jogadores
+    OBJTYPE_Prefab               Prefab (objeto reusável)
+    OBJTYPE_MechWarrior          Mech Warrior (robô)
+    OBJTYPE_Barricade            Barricadas
+    OBJTYPE_VehicleSpawnPoint    Spawn de veículos
+}
+
+═══════════════════════════════════════════════════════════════════════════════
+                        SISTEMAS PRINCIPAIS IDENTIFICADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. GAME OBJECT SYSTEM (GameObj.h)
+   ├─ Base class: GameObject
+   ├─ Tipos: 20+ diferentes
+   ├─ Flags: Physics, Shadows, Occlusion, etc
+   └─ Eventos: OnCreated, OnDestroy, OnUpdate
+
+2. PHYSICS SYSTEM (PhysObj.h, PhysXWorld.h)
+   ├─ Engine: PhysX 3.x
+   ├─ Tipos: Rigid bodies, Kinematic, Constraints
+   ├─ Raycast: Detecção de colisão
+   └─ Callbacks: Collision callbacks
+
+3. VEHICLE SYSTEM (obj_Vehicle.h, VehicleManager.h)
+   ├─ Veículos: Jipes, Helicopters, etc
+   ├─ Descriptor: VehicleDescriptor
+   ├─ Manager: VehicleManager
+   └─ Controle: Input, Movement
+
+4. MESH SYSTEM (obj_Mesh.h)
+   ├─ Static meshes
+   ├─ Animated meshes
+   ├─ Skeletal animation
+   └─ Materials
+
+5. APEX DESTRUCTIBLE SYSTEM (obj_Apex.h, ApexWorld.h)
+   ├─ Nvidia APEX
+   ├─ Destructible objects
+   ├─ Particles
+   └─ Chunks
+
+6. SOUND SYSTEM
+   ├─ FMOD (fmod.dll, fmod_event.dll)
+   ├─ Event-based
+   ├─ 3D audio
+   └─ Streaming
+
+7. PARTICLE SYSTEM
+   ├─ Emitters
+   ├─ Triggers
+   └─ Effects
+
+8. ITEM SYSTEM
+   ├─ Weapons
+   ├─ Ammo
+   ├─ Equipment
+   └─ Items (healing, utilities)
+
+9. NPC/ZOMBIE SYSTEM
+   ├─ AI Navigation
+   ├─ Behavior trees
+   ├─ Zombie types
+   └─ Combat logic
+
+10. PLAYER SYSTEM
+    ├─ Character controller
+    ├─ Inventory
+    ├─ Stats (health, armor)
+    ├─ Weapons
+    └─ Loadouts
+
+11. NETWORK SYSTEM
+    ├─ Client-Server
+    ├─ State sync
+    ├─ Packet serialization
+    └─ Player events
+
+12. UI SYSTEM (Scaleform GFx)
+    ├─ HUD
+    ├─ Menus
+    ├─ Widgets
+    └─ Text/Images
+
+═══════════════════════════════════════════════════════════════════════════════
+                        ARQUIVOS C++ ENCONTRADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+CORE OBJECTS:
+├─ GameObj.h/cpp ............... Base de objetos (695 linhas!)
+├─ AObject.h ................... Sistema de reflexão/metaclass
+├─ PhysObj.h/cpp ............... Física
+├─ sceneBox.h/cpp .............. Bounding boxes
+
+GAME OBJECTS ESPECÍFICOS:
+├─ obj_Mesh.h/cpp .............. Meshes estáticos/dinâmicos
+├─ obj_Vehicle.h/cpp ........... Veículos
+├─ obj_Sprite.h/cpp ............ Sprites 2D
+├─ obj_Dummy.h/cpp ............. Objetos dummy (helpers)
+├─ obj_Apex.h/cpp .............. APEX destructibles
+
+PHYSICS:
+├─ PhysXWorld.h/cpp ............ Mundo PhysX
+├─ PhysXRepXHelpers.h/cpp ...... Serialização PhysX
+├─ CollFunc.hpp ................ Collision functions
+├─ CollMain.h/hpp .............. Collision main
+
+VEHICLES:
+├─ VehicleManager.h/cpp ........ Gerenciador de veículos
+├─ VehicleDescriptor.h/cpp ..... Descritor de veículo
+
+APEX:
+├─ ApexWorld.h/cpp ............. Mundo APEX
+├─ ApexRenderer.h/cpp .......... Renderizador APEX
+├─ ApexFileStream.h/cpp ........ I/O de APEX
+├─ ApexCommon.h ................ Comum APEX
+
+UTILITÁRIOS:
+├─ ObjManag.h/cpp .............. Object manager
+├─ ObjectRegistration.h ........ Registro de classes
+├─ GenericQuadTree.h/cpp ....... Spatial partitioning
+├─ EventTransport.h/cpp ........ Event system
+├─ CamouflageDataManager.h/cpp . Camuflagem
+├─ CSVLog.h/cpp ................ Logging CSV
+├─ APIScaleformGfx.h/cpp ....... UI Scaleform
+└─ DebugHelpers.h/cpp .......... Debug tools
+
+═══════════════════════════════════════════════════════════════════════════════
+                    DADOS/CONFIGURAÇÃO ENCONTRADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Em: bin/Data/
+├─ Meshes ...................... Modelos 3D
+├─ Materials ................... Materiais
+├─ Textures .................... Texturas
+├─ Animations .................. Animações
+└─ Sounds ...................... Áudio
+
+Em: bin/Levels/
+├─ Level files ................. Mapas do jogo
+└─ Spawn points ................ Pontos de spawn
+
+Configuração:
+├─ game.ini .................... Config do jogo
+├─ MasterServer.cfg ............ Config master server
+├─ SupervisorServer.cfg ........ Config supervisor
+├─ messages.cfg ................ Mensagens
+└─ light_presets.ini ........... Presets de iluminação
+
+═══════════════════════════════════════════════════════════════════════════════
+                        FEATURES PRINCIPAIS
+═══════════════════════════════════════════════════════════════════════════════
+
+GAMEPLAY:
+✅ Player controller (movimento, câmera)
+✅ Weapons system (armas, munição, reload)
+✅ Inventory (mochila, equipamento)
+✅ Health system (HP, armor, healing)
+✅ Damage system (raycast, area damage)
+✅ Combat (shooting, melee)
+✅ Death/Respawn
+
+MUNDO:
+✅ Terrain
+✅ Buildings (prédios)
+✅ Vegetation (árvores, plantas)
+✅ Items spawn (armas, munição)
+✅ Destructible objects (vidros, paredes)
+✅ Particles (sangue, fumaça, explosões)
+✅ Decals (marcas de bala)
+
+VEHICLES:
+✅ Jipes
+✅ Helicopters
+✅ Motorcycles
+✅ Tank-like vehicles
+
+NETWORK:
+✅ Multiplayer (até 100+ players)
+✅ Player sync
+✅ Weapon sync
+✅ Health sync
+✅ State replication
+
+NPCS:
+✅ Zombies
+✅ AI Navigation
+✅ Behavior trees
+✅ Combat AI
+✅ Patrol routes
+
+UI:
+✅ HUD (health, ammo, minimap)
+✅ Main menu
+✅ In-game menu
+✅ Inventory UI
+✅ Chat
+✅ Leaderboard
+✅ Loading screens
+
+═══════════════════════════════════════════════════════════════════════════════
+                        COMO SERÁ IMPLEMENTADO EM UNIGINE C#
+═══════════════════════════════════════════════════════════════════════════════
+
+CONVERSÃO PLANEJADA:
+
+C++ (Original)                  →  C# (Unigine)
+─────────────────────────────────────────────────────────────────────────
+GameObj (C++)                   →  GameObject (C#)
+PhysObj (C++)                   →  PhysicsComponent (C#)
+obj_Vehicle (C++)               →  VehicleComponent (C#)
+obj_Mesh (C++)                  →  MeshComponent (C#)
+Player character                →  PlayerController (C#)
+Weapon system                   →  WeaponManager (C#)
+Inventory                       →  InventorySystem (C#)
+Health/Damage                   →  HealthComponent (C#)
+NPC/AI                          →  AIController (C#)
+Network sync                    →  NetworkManager (C#)
+UI (Scaleform)                  →  UIManager (C#)
+Physics (PhysX)                 →  Unigine Physics (built-in)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        ASSETS A INTEGRAR
+═══════════════════════════════════════════════════════════════════════════════
+
+Do bin/Data:
+├─ 3D Models ................... ~100+ meshes
+├─ Textures .................... ~500+ textures
+├─ Materials ................... ~200+ materials
+├─ Animations .................. ~50+ animations
+├─ Particles ................... ~30+ emitters
+└─ Sounds ...................... ~200+ sound effects
+
+Do bin/Levels:
+├─ Map 1 ....................... Zombie zone
+├─ Map 2 ....................... City
+├─ Map 3 ....................... Industrial
+└─ Spawn points ................ 100+ per map
+
+═══════════════════════════════════════════════════════════════════════════════
+                    PRÓXIMO PASSO: IMPLEMENTAÇÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+FASE 1: Estrutura Base (Agora)
+├─ [ ] Converter GameObj → GameObject
+├─ [ ] Converter PhysObj → PhysicsComponent
+├─ [ ] Converter obj_Vehicle → VehicleComponent
+└─ [ ] Converter obj_Mesh → MeshComponent
+
+FASE 2: Player & Combat
+├─ [ ] PlayerController (movimento, câmera)
+├─ [ ] WeaponManager (armas, munição)
+├─ [ ] HealthComponent (HP, armor)
+├─ [ ] DamageSystem (raycast, area)
+└─ [ ] InventorySystem (mochila, equipamento)
+
+FASE 3: NPCs & AI
+├─ [ ] AIController (comportamento)
+├─ [ ] NavigationSystem (pathfinding)
+├─ [ ] ZombieAI (tipos, combate)
+└─ [ ] BehaviorTree (lógica)
+
+FASE 4: Multiplayer
+├─ [ ] NetworkManager (sync)
+├─ [ ] PlayerSync (estado, posição)
+├─ [ ] WeaponSync (disparo, munição)
+└─ [ ] HealthSync (HP, damage)
+
+FASE 5: UI
+├─ [ ] HUDManager (saúde, munição)
+├─ [ ] MenuSystem (menus principais)
+├─ [ ] ChatUI (mensagens)
+└─ [ ] InventoryUI (mochila)
+
+FASE 6: Integração
+├─ [ ] Assets em data/
+├─ [ ] Prefabs prontos
+├─ [ ] Configurações
+└─ [ ] Mundo funcional
+
+═══════════════════════════════════════════════════════════════════════════════
+
+MAPA CRIADO COM SUCESSO! 📊
+
+Agora está pronto para: IMPLEMENTAÇÃO COMPLETA EM C#
+
+═══════════════════════════════════════════════════════════════════════════════

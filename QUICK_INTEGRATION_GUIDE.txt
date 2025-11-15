@@ -1,0 +1,333 @@
+═══════════════════════════════════════════════════════════════════════════════
+GUIA DE INTEGRAÇÃO RÁPIDA - WARZ GAME NO UNIGINE
+═══════════════════════════════════════════════════════════════════════════════
+
+OBJETIVO: Adicionar todos os sistemas ao seu projeto Unigine e testar gameplay
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 1: PREPARAR A CENA NO UNIGINE
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Abra unigine_project.world no Unigine Editor
+2. Crie uma hierarquia básica:
+
+World (root)
+├── GameSystems (empty node - para components)
+│   ├── GameManager (adicione GameManager component)
+│   ├── ItemSystem (adicione ItemSystem component)
+│   ├── UIManager (adicione UIManager component)
+│   ├── VehicleManager (adicione VehicleManager component)
+│   └── NetworkManager (adicione NetworkManager component)
+│
+├── Player (empty node - será o jogador)
+│   ├── Adicione Component: PlayerController
+│   ├── Adicione Component: WeaponManager
+│   ├── Adicione Component: DamageSystem
+│   ├── Adicione Component: InventorySystem
+│   ├── Adicione Component: CharacterController
+│   └── (Adicione uma mesh para visualização)
+│
+├── Terrain (node com mesh do terreno)
+│   └── (Terrain mesh/material)
+│
+├── ItemSpawners (empty node - container de itens)
+│   ├── WeaponSpawner_1 (adicione ItemSpawner component)
+│   ├── AmmoSpawner_1 (adicione ItemSpawner component)
+│   ├── ArmorSpawner_1 (adicione ItemSpawner component)
+│   └── ...
+│
+├── VehicleSpawns (empty node - container de veículos)
+│   ├── JeepSpawn (adicione VehicleSpawnPoint component)
+│   ├── HelicopterSpawn (adicione VehicleSpawnPoint component)
+│   └── ...
+│
+└── ZombieSpawns (empty node - para zombies)
+    └── (Zombies serão spawned dinamicamente)
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 2: CONFIGURAR GAME MANAGER
+═══════════════════════════════════════════════════════════════════════════════
+
+Na node "GameSystems":
+
+1. Selecione a node GameSystems
+2. No Inspector, localize GameManager component
+3. Configure:
+   ├── Level Name: "Zombie Arena"
+   ├── Max Players: 4
+   ├── Wave Start Delay: 5.0
+   └── Outros campos deixe como padrão
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 3: CONFIGURAR PLAYER
+═══════════════════════════════════════════════════════════════════════════════
+
+Na node "Player":
+
+1. Selecione a node Player
+2. Configure PlayerController:
+   ├── Player Name: "Hero"
+   ├── Move Speed: 5.0
+   ├── Sprint Speed: 8.0
+   ├── Jump Height: 2.0
+   ├── Mouse Sensitivity: 2.0
+   └── OK
+
+3. Configure CharacterController:
+   ├── Height: 1.8
+   ├── Radius: 0.3
+   ├── Gravity Scale: 1.0
+   ├── Use Gravity: true
+   └── OK
+
+4. Configure DamageSystem:
+   ├── Max Health: 100
+   ├── Current Health: 100
+   ├── Armor: 0
+   ├── Max Armor: 100
+   └── OK
+
+5. Configure InventorySystem:
+   ├── Max Slots: 10
+   ├── Current Weight: 0
+   ├── Max Weight: 30.0
+   └── OK
+
+6. Configure WeaponManager:
+   ├── Max Total Ammo: 300
+   ├── Raycast Range: 1000.0
+   ├── Show Debug Traces: false (true para debug)
+   └── OK
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 4: CONFIGURAR ITEM SPAWNERS
+═══════════════════════════════════════════════════════════════════════════════
+
+Crie 3 ItemSpawner nodes dentro de "ItemSpawners":
+
+SPAWNER 1 - AMMO:
+├── Node name: AmmoSpawner_1
+├── Posição: (10, 1, 10)
+├── ItemSpawner component:
+│   ├── Item Type: Ammo
+│   ├── Weapon Type: Rifle
+│   ├── Quantity: 30
+│   ├── Respawn Time: 30.0
+│   └── Max Items: 3
+
+SPAWNER 2 - ARMOR:
+├── Node name: ArmorSpawner_1
+├── Posição: (-10, 1, 10)
+├── ItemSpawner component:
+│   ├── Item Type: Armor
+│   ├── Weapon Type: Rifle
+│   ├── Quantity: 25
+│   ├── Respawn Time: 60.0
+│   └── Max Items: 2
+
+SPAWNER 3 - HEALING:
+├── Node name: MedicalSpawner_1
+├── Posição: (0, 1, -10)
+├── ItemSpawner component:
+│   ├── Item Type: Healing
+│   ├── Weapon Type: Melee
+│   ├── Quantity: 50
+│   ├── Respawn Time: 45.0
+│   └── Max Items: 2
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 5: CONFIGURAR VEHICLE SPAWNERS
+═══════════════════════════════════════════════════════════════════════════════
+
+Crie 2 VehicleSpawnPoint nodes dentro de "VehicleSpawns":
+
+SPAWN POINT 1 - JEEP:
+├── Node name: JeepSpawn
+├── Posição: (20, 1, 0)
+├── VehicleSpawnPoint component:
+│   ├── Vehicle Type: Jeep
+│   ├── Respawn Time: 60.0
+│   └── OK
+
+SPAWN POINT 2 - MOTORCYCLE:
+├── Node name: MotorcycleSpawn
+├── Posição: (-20, 1, 0)
+├── VehicleSpawnPoint component:
+│   ├── Vehicle Type: Motorcycle
+│   ├── Respawn Time: 45.0
+│   └── OK
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 6: ADICIONAR TERRENO (OPCIONAL MAS RECOMENDADO)
+═══════════════════════════════════════════════════════════════════════════════
+
+Para o jogo funcionar bem, você precisa de um terreno ou chão:
+
+OPÇÃO A - USAR TERRAIN OBJECT:
+1. Vá para File → Import → Heightmap
+2. Ou use um asset de terreno pronto
+
+OPÇÃO B - CRIAR PLANO SIMPLES:
+1. Crie uma box mesh: Menu → Create → Mesh → Box
+2. Dimensões: 100x1x100
+3. Posição: (0, -1, 0)
+4. Adicione material/textura
+5. Renomeie para "Ground"
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 7: COMPILAR E TESTAR
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Retorne ao VS Code
+2. Compile:
+   $ dotnet build -c Debug
+
+3. Verifique se não há erros:
+   ├── Nenhum erro de compilação
+   ├── Nenhum warning (optional)
+   └── Build succeeded
+
+4. Salve o arquivo unigine_project.world (Ctrl+S no Unigine Editor)
+
+5. No Unigine Editor, clique Play (ou F5)
+
+6. No jogo:
+   ├── WASD - Mova o jogador
+   ├── Mouse - Mire e olhe ao redor
+   ├── Click esquerdo - Dispare a arma
+   ├── R - Recarregue
+   ├── 1-6 - Troque de arma
+   ├── I - Abra inventário
+   ├── T - Abra chat
+   ├── ESC - Pausa
+   └── SPACE - Inicie wave (no menu)
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 8: VERIFICAR CONSOLE PARA DEBUG
+═══════════════════════════════════════════════════════════════════════════════
+
+Na janela de console do Unigine Editor você deve ver:
+
+[GameManager] Initializing game systems...
+[GameManager] Level: Zombie Arena
+[GameManager] Max Players: 4
+[PlayerController] Initialized - Hero
+[WeaponManager] Initialized with 6 weapon types
+[DamageSystem] Initialized
+[InventorySystem] Initialized
+[UIManager] Initialized
+[ItemSystem] Initialized
+[VehicleManager] Initialized
+[ZombieController] Initialized
+[NetworkManager] Initialized
+
+Se vir mensagens de erro, verifique:
+1. Todos os componentes foram adicionados?
+2. As posições das nodes estão ok?
+3. Build teve sucesso?
+
+═══════════════════════════════════════════════════════════════════════════════
+PASSO 9: PRIMEIROS PASSOS NO JOGO
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Pressione F5 para Play
+2. Você verá a mensagem "Press SPACE to start" no console ou UI
+3. Pressione SPACE para iniciar a Wave 1
+4. Zombies começarão a spawnar ao seu redor
+5. Use WASD para mover, Mouse para apontar
+6. Click esquerdo para atirar
+7. R para recarregar
+8. Colete itens para ammo/armor/health
+9. Sobreviva! 🧟
+
+═══════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: "Component not found"
+SOLUÇÃO: Verifique se o component foi realmente adicionado na node (veja no Inspector)
+
+PROBLEMA: "Player não se move"
+SOLUÇÃO: 
+├── Verifique se CharacterController foi adicionado
+├── Verifique se Input está habilitada
+└── Ativie WASD no console: Input.IsKeyDown()
+
+PROBLEMA: "Armas não disparam"
+SOLUÇÃO:
+├── Verifique WeaponManager component
+├── Verifique se está no estado Playing (não Menu)
+├── Tente click esquerdo do mouse
+
+PROBLEMA: "Sem texture/modelo visual"
+SOLUÇÃO:
+├── Adicione uma mesh ao Player node
+├── Use Assets → Models ou importe um modelo FBX/DAE
+└── Configure material/textura
+
+PROBLEMA: "Build error"
+SOLUÇÃO:
+$ dotnet clean
+$ dotnet build -c Debug
+
+═══════════════════════════════════════════════════════════════════════════════
+PRÓXIMAS MELHORIAS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ADICIONAR ASSETS:
+   ├── Importar modelos de personagem do TANAWANT-THONGPING-STUDIO
+   ├── Adicionar texturas
+   ├── Animar personagem
+   └── Adicionar efeitos visuais
+
+2. EXPANDIR CONTEÚDO:
+   ├── Mais tipos de zombies
+   ├── Mais armas
+   ├── Mais mapas
+   ├── Boss fights
+   └── Achievements
+
+3. APERFEIÇOAR GAMEPLAY:
+   ├── Dificuldade progressiva
+   ├── Ondas com objetivos
+   ├── Multiplayer real
+   ├── Ranking persistente
+   └── Skins customizáveis
+
+═══════════════════════════════════════════════════════════════════════════════
+ESTRUTURA DE PASTAS ESPERADA APÓS SETUP
+═══════════════════════════════════════════════════════════════════════════════
+
+unigine_project/
+├── source/
+│   ├── GameLogic/
+│   │   ├── Core/
+│   │   ├── Player/
+│   │   ├── Weapons/
+│   │   ├── NPCs/
+│   │   ├── Vehicles/
+│   │   ├── Items/
+│   │   ├── UI/
+│   │   └── Network/
+│   ├── main.cs
+│   ├── AppWorldLogic.cs
+│   └── ...
+├── data/
+│   ├── warz_game/
+│   │   ├── models/
+│   │   ├── textures/
+│   │   ├── sounds/
+│   │   ├── prefabs/
+│   │   └── levels/
+│   └── unigine_project.world
+├── bin/ (gerado)
+├── obj/ (gerado)
+└── unigine_project.csproj
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PRONTO PARA JOGAR!
+Siga os passos acima para integrar todos os sistemas.
+Quando terminar, você terá um jogo funcional de sobrevivência contra zombies!
+
+═══════════════════════════════════════════════════════════════════════════════
